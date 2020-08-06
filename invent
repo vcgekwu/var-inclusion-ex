@@ -1,0 +1,23 @@
+#[local]
+#localhost
+
+[servers]
+server11
+server22
+server33
+server44
+
+[web_servers]
+server11
+server22
+
+[db_servers]
+server33
+server44
+
+[nna]
+localhost
+
+#[children: all]
+#local
+#servers

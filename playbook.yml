@@ -1,0 +1,38 @@
+---
+  - name: configure web server
+    hosts: server11
+    vars:
+      rule: http
+    tasks:
+      - name: include the vars from the yaml file
+        include_vars: vars/variables.yml
+
+      - name: include the environment file and set the variables
+        include: tasks/environment.yml
+        vars:
+          package: httpd
+          service: httpd
+          svc_state: started
+
+      - name: install the firewall
+        yum:
+          name: "{{ firewall_pkg }}"
+          state: latest
+
+      - name: start the firewall
+        service:
+          name: firewalld
+          state: started
+          enabled: true
+
+      - name: open the port for {{ rule }}
+        firewalld:
+          service: "{{ rule }}"
+          immediate: true
+          permanent: true
+          state: enabled
+
+      - name: create index.html
+        copy:
+          content: "{{ ansible_fqdn }} has been customised using ansible on the {{ ansible_date_time.date }}\n"
+          dest: /var/www/html/index.html
